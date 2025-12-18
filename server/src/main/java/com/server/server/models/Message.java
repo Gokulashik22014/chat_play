@@ -1,6 +1,7 @@
 package com.server.server.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalTime;
 
