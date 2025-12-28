@@ -6,6 +6,17 @@ type ChatMessage = {
   receiver: string;
   message: string;
 };
+type User = {
+  id: number;
+  username: string;
+  status: Status;
+};
+const Status = {
+  ONLINE: 1,
+  OFFLINE: 0,
+} as const;
+
+type Status = (typeof Status)[keyof typeof Status];
 
 let client: Client;
 
@@ -14,9 +25,9 @@ const App = () => {
   const [input, setInput] = useState("");
   const [sender, setSender] = useState("");
   const [receiver, setReceiver] = useState("");
-  const [active,setActive]=useState(false)
+  const [active, setActive] = useState(false);
   useEffect(() => {
-    if(active)connect();
+    if (active) connect();
     return () => disconnect();
   }, [active]);
 
@@ -25,13 +36,22 @@ const App = () => {
     client = new Client({
       brokerURL: "ws://localhost:3000/ws",
       reconnectDelay: 5000,
-      connectHeaders:{
-        userId:sender,
+      connectHeaders: {
+        userId: sender,
       },
       onConnect: () => {
         client.subscribe("/user/queue/messages", (message) => {
           const parsed: ChatMessage = JSON.parse(message.body);
           setMessages((prev) => [...prev, parsed]);
+        });
+        //subscribe to something that sends message about people joining online
+        client.subscribe("/topic/present", (data) => {
+          console.log("subs to topic present");
+          const users: User[] = JSON.parse(data.body);
+        });
+        //send message to something to put their existence
+        client.publish({
+          destination: "/app/send/presence",
         });
       },
     });
@@ -71,7 +91,7 @@ const App = () => {
           value={sender}
           disabled={active}
         />
-        <button onClick={()=>setActive(true)}>Confirm username</button>
+        <button onClick={() => setActive(true)}>Confirm username</button>
         <input
           type="text"
           placeholder="receiver"
