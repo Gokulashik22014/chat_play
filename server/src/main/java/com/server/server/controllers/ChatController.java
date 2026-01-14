@@ -42,14 +42,14 @@ public class ChatController {
     @MessageMapping("/send/presence")
     @SendTo("/topic/present")
     public List<User> handlingUserStatus(Principal principal) {
-        String username=principal.getName();
-        System.out.println(username);
-//        tempUsers.stream().filter((user)->user.username.equals(username)).findFirst()
-        tempUsers.forEach(user -> {
-            if(user.username.equals(username)){
-                user.status=Status.ONLINE;
-            }
-        });
+//        String username=principal.getName();
+//        System.out.println(username);
+////        tempUsers.stream().filter((user)->user.username.equals(username)).findFirst()
+//        tempUsers.forEach(user -> {
+//            if(user.username.equals(username)){
+//                user.status=Status.ONLINE;
+//            }
+//        });
         return tempUsers;
     }
 }

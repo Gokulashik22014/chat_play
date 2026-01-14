@@ -48,6 +48,7 @@ const App = () => {
         client.subscribe("/topic/present", (data) => {
           console.log("subs to topic present");
           const users: User[] = JSON.parse(data.body);
+          console.log(users)
         });
         //send message to something to put their existence
         client.publish({
